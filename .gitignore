@@ -6,3 +6,5 @@ dist/
 .postman/
 postman/
 npm
+php-api/uploads/*
+!php-api/uploads/.gitkeep
