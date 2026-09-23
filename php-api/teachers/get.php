@@ -15,41 +15,43 @@ require_once "../config/db.php";
 
 $sql = "
     SELECT
-        id,
-        name,
-        email,
-        phone,
-        course,
-        age,
-        gender,
-        address,
-        profile_image,
-        created_at,
-        updated_at
-    FROM students
-    ORDER BY id ASC
+        t.id,
+        t.teacher_name,
+        t.email,
+        t.phone,
+        t.department_id,
+        d.department_name,
+        t.subject,
+        t.experience,
+        t.gender,
+        t.salary,
+        t.created_at
+    FROM teachers t
+    INNER JOIN departments d
+        ON t.department_id = d.id
+    ORDER BY t.id DESC
 ";
 
 $result = $conn->query($sql);
 
 if ($result) {
 
-    $students = [];
+    $teachers = [];
 
     while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
+        $teachers[] = $row;
     }
 
     echo json_encode([
         "status" => 200,
-        "data" => $students
+        "data" => $teachers
     ]);
 
 } else {
 
     echo json_encode([
         "status" => 500,
-        "message" => "Unable to fetch students."
+        "message" => "Unable to load teachers."
     ]);
 }
 

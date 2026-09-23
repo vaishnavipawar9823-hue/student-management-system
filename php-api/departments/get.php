@@ -3,7 +3,7 @@
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Methods: GET, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
 if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
@@ -13,43 +13,28 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 
 require_once "../config/db.php";
 
-$sql = "
-    SELECT
-        id,
-        name,
-        email,
-        phone,
-        course,
-        age,
-        gender,
-        address,
-        profile_image,
-        created_at,
-        updated_at
-    FROM students
-    ORDER BY id ASC
-";
+$sql = "SELECT * FROM departments ORDER BY id DESC";
 
 $result = $conn->query($sql);
 
 if ($result) {
 
-    $students = [];
+    $departments = [];
 
     while ($row = $result->fetch_assoc()) {
-        $students[] = $row;
+        $departments[] = $row;
     }
 
     echo json_encode([
         "status" => 200,
-        "data" => $students
+        "data" => $departments
     ]);
 
 } else {
 
     echo json_encode([
         "status" => 500,
-        "message" => "Unable to fetch students."
+        "message" => "Unable to fetch departments."
     ]);
 }
 

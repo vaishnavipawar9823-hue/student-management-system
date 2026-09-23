@@ -8,3 +8,5 @@ postman/
 npm
 php-api/uploads/*
 !php-api/uploads/.gitkeep
+php-api/teacher_documents/uploads/*
+!php-api/teacher_documents/uploads/.gitkeep
