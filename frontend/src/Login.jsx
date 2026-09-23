@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import API_BASE_URL from "./api/config";
 
@@ -6,6 +6,15 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+
+    useEffect(() => {
+        const rememberedEmail = localStorage.getItem("sms_remembered_email");
+        if (rememberedEmail) {
+            setEmail(rememberedEmail);
+            setRememberMe(true);
+        }
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -25,6 +34,12 @@ function Login() {
             );
 
             if (response.data.status === 200) {
+                if (rememberMe) {
+                    localStorage.setItem("sms_remembered_email", email);
+                } else {
+                    localStorage.removeItem("sms_remembered_email");
+                }
+
                 window.location.href = "/dashboard";
             } else {
                 setMessage(response.data.message);
@@ -102,6 +117,10 @@ function Login() {
                         <input
                             type="checkbox"
                             id="remember"
+                            checked={rememberMe}
+                            onChange={(e) =>
+                                setRememberMe(e.target.checked)
+                            }
                         />
 
                         <label htmlFor="remember">

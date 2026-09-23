@@ -69,6 +69,31 @@ function AdminLayout() {
                         <span>Dashboard</span>
                     </NavLink>
 
+                    <NavLink to="/departments">
+    <i className="bi bi-building"></i>
+    <span>Departments</span>
+</NavLink>
+
+<NavLink to="/teachers">
+    <i className="bi bi-person-workspace"></i>
+    <span>Teachers</span>
+</NavLink>
+
+<NavLink to="/attendance">
+    <i className="bi bi-calendar-check"></i>
+    <span>Student Attendance</span>
+</NavLink>
+
+<NavLink to="/teacher-attendance">
+    <i className="bi bi-person-check"></i>
+    <span>Teacher Attendance</span>
+</NavLink>
+
+<NavLink to="/leaves">
+    <i className="bi bi-calendar2-week"></i>
+    <span>Leaves</span>
+</NavLink>
+
                     <NavLink to="/student-management">
                         <i className="bi bi-people"></i>
                         <span>Users</span>

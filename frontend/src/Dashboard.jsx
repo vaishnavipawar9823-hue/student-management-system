@@ -4,29 +4,80 @@ import API_BASE_URL from "./api/config";
 
 function Dashboard() {
     const [students, setStudents] = useState([]);
+    const [teachers, setTeachers] = useState([]);
+    const [departments, setDepartments] = useState([]);
+    const [pendingLeaves, setPendingLeaves] = useState(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const getStudents = async () => {
+        const loadDashboardData = async () => {
             try {
-                const response = await axios.get(
-                    `${API_BASE_URL}/students/get.php`,
-                    {
+                const [
+                    studentsResponse,
+                    teachersResponse,
+                    departmentsResponse,
+                    studentLeavesResponse,
+                    teacherLeavesResponse
+                ] = await Promise.all([
+                    axios.get(`${API_BASE_URL}/students/get.php`, {
                         withCredentials: true
-                    }
+                    }),
+                    axios.get(`${API_BASE_URL}/teachers/get.php`),
+                    axios.get(`${API_BASE_URL}/departments/get.php`),
+                    axios.get(`${API_BASE_URL}/student_leaves/get.php`),
+                    axios.get(`${API_BASE_URL}/teacher_leaves/get.php`)
+                ]);
+
+                setStudents(
+                    studentsResponse.data.status === 200 &&
+                    Array.isArray(studentsResponse.data.data)
+                        ? studentsResponse.data.data
+                        : []
                 );
 
-                if (response.data.status === 200) {
-                    setStudents(response.data.data);
-                }
+                setTeachers(
+                    teachersResponse.data.status === 200 &&
+                    Array.isArray(teachersResponse.data.data)
+                        ? teachersResponse.data.data
+                        : []
+                );
+
+                setDepartments(
+                    departmentsResponse.data.status === 200 &&
+                    Array.isArray(departmentsResponse.data.data)
+                        ? departmentsResponse.data.data
+                        : []
+                );
+
+                const studentPending =
+                    studentLeavesResponse.data.status === 200 &&
+                    Array.isArray(studentLeavesResponse.data.data)
+                        ? studentLeavesResponse.data.data.filter(
+                              (leave) => leave.status === "Pending"
+                          ).length
+                        : 0;
+
+                const teacherPending =
+                    teacherLeavesResponse.data.status === 200 &&
+                    Array.isArray(teacherLeavesResponse.data.data)
+                        ? teacherLeavesResponse.data.data.filter(
+                              (leave) => leave.status === "Pending"
+                          ).length
+                        : 0;
+
+                setPendingLeaves(studentPending + teacherPending);
             } catch (error) {
                 console.error("Dashboard error:", error);
+                setStudents([]);
+                setTeachers([]);
+                setDepartments([]);
+                setPendingLeaves(0);
             } finally {
                 setLoading(false);
             }
         };
 
-        getStudents();
+        loadDashboardData();
     }, []);
 
     if (loading) {
@@ -106,6 +157,66 @@ function Dashboard() {
 
                     <p style={smallTextStyle}>
                         Registered students
+                    </p>
+                </div>
+
+
+                {/* Teachers */}
+                <div style={cardStyle}>
+                    <div style={iconBoxStyle}>
+                        <i className="bi bi-person-workspace"></i>
+                    </div>
+
+                    <p style={labelStyle}>
+                        Total Teachers
+                    </p>
+
+                    <h2 style={numberStyle}>
+                        {teachers.length}
+                    </h2>
+
+                    <p style={smallTextStyle}>
+                        Registered teachers
+                    </p>
+                </div>
+
+
+                {/* Departments */}
+                <div style={cardStyle}>
+                    <div style={iconBoxStyle}>
+                        <i className="bi bi-building"></i>
+                    </div>
+
+                    <p style={labelStyle}>
+                        Departments
+                    </p>
+
+                    <h2 style={numberStyle}>
+                        {departments.length}
+                    </h2>
+
+                    <p style={smallTextStyle}>
+                        Active departments
+                    </p>
+                </div>
+
+
+                {/* Pending Leaves */}
+                <div style={cardStyle}>
+                    <div style={iconBoxStyle}>
+                        <i className="bi bi-calendar2-week"></i>
+                    </div>
+
+                    <p style={labelStyle}>
+                        Pending Leaves
+                    </p>
+
+                    <h2 style={numberStyle}>
+                        {pendingLeaves}
+                    </h2>
+
+                    <p style={smallTextStyle}>
+                        Student + teacher requests
                     </p>
                 </div>
 

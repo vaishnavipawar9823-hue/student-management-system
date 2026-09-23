@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Settings() {
     const [emailNotifications, setEmailNotifications] = useState(true);
@@ -6,8 +6,42 @@ function Settings() {
     const [language, setLanguage] = useState("English");
     const [saved, setSaved] = useState(false);
 
+    useEffect(() => {
+        const savedEmailNotifications = localStorage.getItem(
+            "sms_email_notifications"
+        );
+        const savedDashboardNotifications = localStorage.getItem(
+            "sms_dashboard_notifications"
+        );
+        const savedLanguage = localStorage.getItem("sms_language");
+
+        if (savedEmailNotifications !== null) {
+            setEmailNotifications(savedEmailNotifications === "true");
+        }
+
+        if (savedDashboardNotifications !== null) {
+            setDashboardNotifications(
+                savedDashboardNotifications === "true"
+            );
+        }
+
+        if (savedLanguage) {
+            setLanguage(savedLanguage);
+        }
+    }, []);
+
     const handleSave = (e) => {
         e.preventDefault();
+
+        localStorage.setItem(
+            "sms_email_notifications",
+            String(emailNotifications)
+        );
+        localStorage.setItem(
+            "sms_dashboard_notifications",
+            String(dashboardNotifications)
+        );
+        localStorage.setItem("sms_language", language);
 
         setSaved(true);
 
